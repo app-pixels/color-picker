@@ -1,3 +1,5 @@
+> Part of [**app-pixels.com**](https://www.app-pixels.com) — browse + flash this app at [`/apps/color-picker`](https://www.app-pixels.com/apps/color-picker).
+
 # color-picker
 
 **Color Picker** · v1.0.0
