@@ -167,7 +167,7 @@ static void draw() {
     canvas->flush();
 }
 
-void app_colorpicker_setup(Arduino_SH8601 *gfx) {
+void app_colorpicker_setup(Arduino_OLED *gfx) {
     (void)gfx;
     canvas    = g_canvas;
     s_h       = 0.0f;
