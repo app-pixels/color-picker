@@ -2,7 +2,7 @@
 
 # color-picker
 
-**Color Picker** · v1.0.0
+**Color Picker** · v1.0.2
 
 Pick a color; copy the HEX, RGB, and HSV values.
 

@@ -16,9 +16,8 @@
 #include <Arduino.h>
 #include <math.h>
 #include "canvas/Arduino_Canvas.h"
-#include "pin_config.h"
+#include "board.h"
 #include "HWCDC.h"
-#include "TouchDrvFT6X36.hpp"
 
 extern USBCDC USBSerial;
 extern Arduino_Canvas *g_canvas;
@@ -27,7 +26,10 @@ extern Arduino_Canvas *g_canvas;
 #define PWR_POLL_MS 50
 
 static Arduino_Canvas   *canvas     = nullptr;
-static TouchDrvFT6X36    s_touch;
+// Built via board_make_touch() so the right driver is chosen per board
+// revision. A raw FocalTech instance talks to 0x38, which nothing answers
+// on an AMOLED-1.8 V2 (CST816 @0x15) — touch was silently dead there.
+static TouchDrvInterface *s_touch = nullptr;
 static float             s_h        = 0.0f;   // 0-360
 static float             s_s        = 1.0f;   // 0-1
 static float             s_v        = 1.0f;   // 0-1
@@ -179,7 +181,7 @@ void app_colorpicker_setup(Arduino_OLED *gfx) {
     s_lastTy  = -1;
     pinMode(BOOT_BTN, INPUT_PULLUP);
     // Wire already initialised by launcher / standalone .ino
-    s_touch.begin(Wire, 0x38, IIC_SDA, IIC_SCL);
+    s_touch = board_make_touch();
     s_hintActive = true;
     s_hintEnd    = millis() + 3000;
     draw();
@@ -197,7 +199,7 @@ void app_colorpicker_loop() {
 
     // Touch: drag for hue (L/R) and saturation (U/D)
     int16_t tx, ty;
-    if (s_touch.getPoint(&tx, &ty, 1)) {
+    if (s_touch && s_touch->getPoint(&tx, &ty, 1)) {
         if (s_hintActive) { s_hintActive = false; draw(); }
         if (s_lastTx >= 0) {
             int16_t dx = tx - s_lastTx;
